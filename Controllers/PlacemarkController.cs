@@ -26,12 +26,13 @@ namespace Prova.Controllers
         }
 
         [HttpGet]
-        public IActionResult GetFilteredPlacemarks([FromQuery] FilterRequestInputModel filterRequestInputModel)
+        public ActionResult<PlacemarkViewModel> GetFilteredPlacemarks([FromQuery] FilterRequestInputModel filterRequestInputModel)
         {
             if (!ModelState.IsValid) return BadRequest(ModelState);
 
-            var teste = _placemarkService.FilterPlacemarks(filterRequestInputModel);
-            return Ok(teste);
+            var listPlacemarks = _placemarkService.FilterPlacemarks(filterRequestInputModel);
+
+            return Ok(_mapper.Map<IEnumerable<PlacemarkViewModel>>(listPlacemarks));
         }
 
         [HttpGet("filters")]
