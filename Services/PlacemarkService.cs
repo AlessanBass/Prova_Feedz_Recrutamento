@@ -2,7 +2,7 @@
 using Prova.Enums;
 using Prova.InputModel;
 using Prova.Models;
-using Prova.Repository;
+using Prova.Repositories;
 using SharpKml.Dom;
 using System.Linq;
 using System.Reflection;
@@ -155,22 +155,25 @@ namespace Prova.Services
                 var coordenadasProperty = placemark.GetType().GetProperty("Coordenadas");
                 var coordenadasValue = coordenadasProperty != null ? coordenadasProperty.GetValue(placemark)?.ToString() : "";
 
+                var gpxmedialinksProperty = placemark.GetType().GetProperty("GxMediaLinks");
+                var gpxmedialinksValue = gpxmedialinksProperty != null ? gpxmedialinksProperty.GetValue(placemark)?.ToString() : "";
+
                 // Incluir as informações do Placemark
-                kmlContent += $"<name>{nameValue}</name>\n";
-                kmlContent += $"<description><![CDATA[{descriptionValue}]]></description>\n";
-                kmlContent += "<styleUrl>#icon-1899-0288D1</styleUrl>\n";
+                kmlContent += $" <name>{nameValue}</name>\n";
+                kmlContent += $" <description><![CDATA[{descriptionValue}]]></description>\n";
+                kmlContent += " <styleUrl>#icon-1899-0288D1</styleUrl>\n";
 
                 // Adicionar dados extras no ExtendedData
-                kmlContent += "<ExtendedData>\n";
-                kmlContent += $"<Data name=\"RUA/CRUZAMENTO\"><value>{ruaValue}</value></Data>\n";
-                kmlContent += $"<Data name=\"REFERENCIA\"><value>{referenciaValue}</value></Data>\n";
-                kmlContent += $"<Data name=\"BAIRRO\"><value>{bairroValue}</value></Data>\n";
-                kmlContent += $"<Data name=\"SITUAÇÃO\"><value>{situacaoValue}</value></Data>\n";
-                kmlContent += $"<Data name=\"CLIENTE\"><value>{clienteValue}</value></Data>\n";
-                kmlContent += $"<Data name=\"DATA\"><value>{dataValue}</value></Data>\n";
-                kmlContent += $"<Data name=\"COORDENADAS\"><value>{coordenadasValue}</value></Data>\n";
-                kmlContent += "<Data name=\"gx_media_links\"><value><![CDATA[https://mymaps.usercontent.google.com/hostedimage/m/*/3AEDAZkptha52aQADlWuiSJFbxhJFgpnceShC7zVAm_q5UOVwZ6k8dL-N4nO8yIi8r85RlzqMmImLU9Z3Q-Tp_ujD-wOWuxComJNfKmSJbHdGuAIYkyg_hfcSxOSLa75hoI7IjgrQmXpcfLno5DEFwmOmGgqY3blb6QWS7nPx0-4nV39Z5yt-4MxbwmNVRVLCJXXnksGLONq7Or0UeO2hXq9GZkU3xF-vi1g1fS4wr-13sX2rtL6qidVpQgcKHqM?authuser=0&fife=s16383]]></value></Data>\n";
-                kmlContent += "</ExtendedData>\n";
+                kmlContent += " <ExtendedData>\n";
+                kmlContent += $"  <Data name=\"RUA/CRUZAMENTO\">\n    <value>{ruaValue}</value>\n</Data>\n";
+                kmlContent += $"  <Data name=\"REFERENCIA\">\n    <value>{referenciaValue}</value>\n </Data>\n";
+                kmlContent += $"  <Data name=\"BAIRRO\">\n    <value>{bairroValue}</value>\n </Data>\n";
+                kmlContent += $"  <Data name=\"SITUAÇÃO\">\n    <value>{situacaoValue}</value>\n </Data>\n";
+                kmlContent += $"  <Data name=\"CLIENTE\">\n    <value>{clienteValue}</value>\n </Data>\n";
+                kmlContent += $"  <Data name=\"DATA\">\n    <value>{dataValue}</value>\n </Data>\n";
+                kmlContent += $"  <Data name=\"COORDENADAS\">\n    <value>{coordenadasValue}</value>\n </Data>\n";
+                kmlContent += $"  <Data name=\"gx_media_links\">\n    <value><![CDATA[{gpxmedialinksValue}]]></value>\n </Data>\n";
+                kmlContent += " </ExtendedData>\n";
 
                 // Coordenadas (assumindo que o formato é longitude, latitude)
                 if (!string.IsNullOrEmpty(coordenadasValue))

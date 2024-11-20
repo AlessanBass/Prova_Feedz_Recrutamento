@@ -2,7 +2,7 @@
 using SharpKml.Dom;
 using SharpKml.Engine;
 
-namespace Prova.Repository
+namespace Prova.Repositories
 {
     public class PlacemarkRepository
     {
@@ -41,11 +41,16 @@ namespace Prova.Repository
 
                     placemarks.Add(new PlacemarkModel
                     {
+                        Name = placemark.Name,
+                        Description = placemark.Description?.Text,
                         Cliente = GetValue(extendedData, "CLIENTE"),
                         Situacao = GetValue(extendedData, "SITUAÇÃO"),
                         Bairro = GetValue(extendedData, "BAIRRO"),
                         Referencia = GetValue(extendedData, "REFERENCIA"),
-                        RuaCruzamento = GetValue(extendedData, "RUA/CRUZAMENTO")
+                        RuaCruzamento = GetValue(extendedData, "RUA/CRUZAMENTO"),
+                        Data = GetValue(extendedData, "DATA"),
+                        Coordenadas = GetValue(extendedData, "COORDENADAS"),
+                        GxMediaLinks = GetValue(extendedData, "gx_media_links"),
                     });
                 }
                 else if (feature is Container childContainer)
