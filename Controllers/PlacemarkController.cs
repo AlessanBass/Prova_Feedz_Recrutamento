@@ -26,10 +26,6 @@ namespace Prova.Controllers
 
             var filteredPlacemarks = _placemarkService.FilterPlacemarks(filterRequestInputModel);
 
-            //if (!filteredPlacemarks.Any())
-            //    return BadRequest("No data found with the provided filters.");
-
-            // Generate a new KML file with the filtered data.
             var newKml = _placemarkService.GenerateKml(filteredPlacemarks);
             return File(newKml, "application/vnd.google-earth.kml+xml", "filtered.kml");
         }

@@ -175,7 +175,7 @@ namespace Prova.Services
                 kmlContent += $"  <Data name=\"gx_media_links\">\n    <value><![CDATA[{gpxmedialinksValue}]]></value>\n </Data>\n";
                 kmlContent += " </ExtendedData>\n";
 
-                // Coordenadas (assumindo que o formato é longitude, latitude)
+                // Coordenadas
                 if (!string.IsNullOrEmpty(coordenadasValue))
                 {
                     var coords = coordenadasValue.Split(',');
