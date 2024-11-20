@@ -3,6 +3,7 @@ using Prova.Enums;
 using Prova.InputModel;
 using Prova.Models;
 using Prova.Repository;
+using SharpKml.Dom;
 using System.Linq;
 using System.Reflection;
 
@@ -111,5 +112,96 @@ namespace Prova.Services
 
             return false;
         }
+
+        public byte[] GenerateKml(IEnumerable<object> placemarks)
+        {
+            // Início do KML
+            var kmlContent = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n";
+            kmlContent += "<kml xmlns=\"http://www.opengis.net/kml/2.2\">\n";
+            kmlContent += "<Document>\n";
+
+            // Nome do arquivo
+            kmlContent += "<name>PLANILHA PARA IMPORTAR GOOGLE MAPS DIRECIONADORES.xlsx</name>\n";
+
+            foreach (var placemark in placemarks)
+            {
+                kmlContent += "<Placemark>\n";
+
+                // Usando reflexão para acessar as propriedades do placemark
+                var nameProperty = placemark.GetType().GetProperty("Name");
+                var nameValue = nameProperty != null ? nameProperty.GetValue(placemark)?.ToString() : "Unknown";
+
+                var descriptionProperty = placemark.GetType().GetProperty("Description");
+                var descriptionValue = descriptionProperty != null ? descriptionProperty.GetValue(placemark)?.ToString() : "";
+
+                var ruaProperty = placemark.GetType().GetProperty("RuaCruzamento");
+                var ruaValue = ruaProperty != null ? ruaProperty.GetValue(placemark)?.ToString() : "";
+
+                var referenciaProperty = placemark.GetType().GetProperty("Referencia");
+                var referenciaValue = referenciaProperty != null ? referenciaProperty.GetValue(placemark)?.ToString() : "";
+
+                var situacaoProperty = placemark.GetType().GetProperty("Situacao");
+                var situacaoValue = situacaoProperty != null ? situacaoProperty.GetValue(placemark)?.ToString() : "";
+
+                var bairroProperty = placemark.GetType().GetProperty("Bairro");
+                var bairroValue = bairroProperty != null ? bairroProperty.GetValue(placemark)?.ToString() : "";
+
+                var clienteProperty = placemark.GetType().GetProperty("Cliente");
+                var clienteValue = clienteProperty != null ? clienteProperty.GetValue(placemark)?.ToString() : "";
+
+                var dataProperty = placemark.GetType().GetProperty("Data");
+                var dataValue = dataProperty != null ? dataProperty.GetValue(placemark)?.ToString() : "";
+
+                var coordenadasProperty = placemark.GetType().GetProperty("Coordenadas");
+                var coordenadasValue = coordenadasProperty != null ? coordenadasProperty.GetValue(placemark)?.ToString() : "";
+
+                // Incluir as informações do Placemark
+                kmlContent += $"<name>{nameValue}</name>\n";
+                kmlContent += $"<description><![CDATA[{descriptionValue}]]></description>\n";
+                kmlContent += "<styleUrl>#icon-1899-0288D1</styleUrl>\n";
+
+                // Adicionar dados extras no ExtendedData
+                kmlContent += "<ExtendedData>\n";
+                kmlContent += $"<Data name=\"RUA/CRUZAMENTO\"><value>{ruaValue}</value></Data>\n";
+                kmlContent += $"<Data name=\"REFERENCIA\"><value>{referenciaValue}</value></Data>\n";
+                kmlContent += $"<Data name=\"BAIRRO\"><value>{bairroValue}</value></Data>\n";
+                kmlContent += $"<Data name=\"SITUAÇÃO\"><value>{situacaoValue}</value></Data>\n";
+                kmlContent += $"<Data name=\"CLIENTE\"><value>{clienteValue}</value></Data>\n";
+                kmlContent += $"<Data name=\"DATA\"><value>{dataValue}</value></Data>\n";
+                kmlContent += $"<Data name=\"COORDENADAS\"><value>{coordenadasValue}</value></Data>\n";
+                kmlContent += "<Data name=\"gx_media_links\"><value><![CDATA[https://mymaps.usercontent.google.com/hostedimage/m/*/3AEDAZkptha52aQADlWuiSJFbxhJFgpnceShC7zVAm_q5UOVwZ6k8dL-N4nO8yIi8r85RlzqMmImLU9Z3Q-Tp_ujD-wOWuxComJNfKmSJbHdGuAIYkyg_hfcSxOSLa75hoI7IjgrQmXpcfLno5DEFwmOmGgqY3blb6QWS7nPx0-4nV39Z5yt-4MxbwmNVRVLCJXXnksGLONq7Or0UeO2hXq9GZkU3xF-vi1g1fS4wr-13sX2rtL6qidVpQgcKHqM?authuser=0&fife=s16383]]></value></Data>\n";
+                kmlContent += "</ExtendedData>\n";
+
+                // Coordenadas (assumindo que o formato é longitude, latitude)
+                if (!string.IsNullOrEmpty(coordenadasValue))
+                {
+                    var coords = coordenadasValue.Split(',');
+                    if (coords.Length == 2)
+                    {
+                        var longitude = coords[0];
+                        var latitude = coords[1];
+                        kmlContent += "<Point>\n";
+                        kmlContent += $"<coordinates>{longitude},{latitude},0</coordinates>\n";
+                        kmlContent += "</Point>\n";
+                    }
+                }
+
+                kmlContent += "</Placemark>\n";
+            }
+
+            // Fechar a tag de Document e KML
+            kmlContent += "</Document>\n";
+            kmlContent += "</kml>\n";
+
+            // Retorna o conteúdo KML como um array de bytes
+            return System.Text.Encoding.UTF8.GetBytes(kmlContent);
+        }
+
+
+
+
+
+
+
     }
 }
